@@ -1,6 +1,3 @@
-import asyncio
-import io
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -9,8 +6,6 @@ import torch.optim as optim
 from PIL import Image
 
 import torchvision.transforms as transforms
-from torchvision.utils import save_image
-
 
 class ContentLoss(nn.Module):
     def __init__(self, target, ):
@@ -142,8 +137,3 @@ class StyleTransfer:
         self.input_img.data.clamp_(0, 1)
 
         return self.input_img
-
-
-# output = run_style_transfer(content_img, style_img, input_img)
-
-# save_image(output, 'test2.jpg')

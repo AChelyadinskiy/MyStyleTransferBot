@@ -1,9 +1,6 @@
-import io
 import logging
-import threading
 
-from PIL import Image
-from aiogram import Bot, Dispatcher, executor, types
+from aiogram import Bot, Dispatcher
 import os
 from aiogram.utils.emoji import emojize
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -24,26 +21,6 @@ WEBAPP_PORT = int(os.environ.get('PORT', 5000))
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
-
-# @dp.message_handler(lambda message: message.text.startswith('ph'))
-# async def del_expense(message: types.Message):
-#     image = Image.open('picasso.jpg').resize((128, 128))
-#     img_byte_arr = io.BytesIO()
-#     image.save(img_byte_arr, format='PNG')
-#     await bot.send_photo(message.from_user.id, photo=img_byte_arr.getvalue())
-#
-#
-# @dp.message_handler(content_types=['photo'])
-# async def ph(message: types.Message):
-#     raw = await message.photo[0].download()
-#     print(raw.raw)
-#     image = await bot.get_file(message.photo[-1].file_id)
-#     image = (await bot.download_file(image.file_path)).read()
-#
-#     image = Image.open(io.BytesIO(image)).resize((128, 128))
-#     img_byte_arr = io.BytesIO()
-#     image.save(img_byte_arr, format='PNG')
-#     await bot.send_photo(message.from_user.id, photo=img_byte_arr.getvalue())
 
 users_data = {}
 
@@ -209,14 +186,6 @@ async def get_image(message):
 async def generate(callback_query):
     text = "Теперь придется немного подождать... Процесс может занять до 15 минут, а в некоторых случаях и дольше"
     await callback_query.message.edit_text(text)
-    t = threading.Thread(
-        target=lambda callback_query, StyleTransfer, users_data:
-        asyncio.run(process_nst(callback_query, StyleTransfer, users_data)),
-        args=(callback_query, StyleTransfer, users_data))
-    t.start()
-
-
-async def process_nst(callback_query, StyleTransfer, users_data):
     user_data = users_data[callback_query.from_user.id]
     output = await style_transfer(StyleTransfer, user_data, *user_data.photos)
     await bot.send_message(callback_query.from_user.id, emojize('Лови что получилось! :partying_face:'))
@@ -258,7 +227,6 @@ async def on_shutdown(dp):
 
 
 if __name__ == '__main__':
-    # executor.start_polling(dp, skip_updates=True)
     logging.basicConfig(level=logging.INFO)
     start_webhook(
         dispatcher=dp,
