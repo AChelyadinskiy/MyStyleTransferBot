@@ -1,5 +1,6 @@
 import io
 import logging
+import threading
 
 from PIL import Image
 from aiogram import Bot, Dispatcher, executor, types
@@ -208,6 +209,14 @@ async def get_image(message):
 async def generate(callback_query):
     text = "Теперь придется немного подождать... Процесс может занять до 15 минут, а в некоторых случаях и дольше"
     await callback_query.message.edit_text(text)
+    t = threading.Thread(
+        target=lambda callback_query, StyleTransfer, users_data:
+        asyncio.run(process_nst(callback_query, StyleTransfer, users_data)),
+        args=(callback_query, StyleTransfer, users_data))
+    t.start()
+
+
+async def process_nst(callback_query, StyleTransfer, users_data):
     user_data = users_data[callback_query.from_user.id]
     output = await style_transfer(StyleTransfer, user_data, *user_data.photos)
     await bot.send_message(callback_query.from_user.id, emojize('Лови что получилось! :partying_face:'))
