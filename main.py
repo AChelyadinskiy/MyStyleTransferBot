@@ -1,5 +1,4 @@
 import io
-import logging
 
 from PIL import Image
 from aiogram import Bot, Dispatcher, executor, types
@@ -7,8 +6,6 @@ import os
 from aiogram.utils.emoji import emojize
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from model import *
-
-logging.basicConfig(level=logging.INFO)
 
 API_TOKEN = os.getenv("TELEGRAM_API_TOKEN")
 
@@ -228,11 +225,6 @@ def tensor2img(t):
     img.save(img_byte_arr, format='PNG')
     return img_byte_arr.getvalue()
 
-
-async def on_startup(dispatcher):
-    logging.warning('Starting...')
-
-    #await bot.set_webhook(webhook_url)
 
 # if __name__ == '__main__':
 #     if CONNECTION_TYPE == 'POLLING':
