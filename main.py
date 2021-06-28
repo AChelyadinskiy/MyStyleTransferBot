@@ -236,7 +236,7 @@ async def style_transfer(st_class, user, *imgs):
                   epochs=user.settings['num_epochs'],
                   style_weight=100000, content_weight=1)
 
-    output = st.run_style_transfer()
+    output = await st.run_style_transfer()
     return tensor2img(output)
 
 
