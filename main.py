@@ -1,4 +1,5 @@
 import logging
+import io
 
 from aiogram import Bot, Dispatcher
 import os
