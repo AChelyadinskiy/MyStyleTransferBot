@@ -80,7 +80,7 @@ class StyleTransfer:
         optimizer = optim.LBFGS([input_img.requires_grad_()])
         return optimizer
 
-    async def run_style_transfer(self):
+    def run_style_transfer(self):
         """Run the style transfer."""
         print('Building the style transfer model..')
 
