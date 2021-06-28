@@ -218,7 +218,7 @@ async def generate(callback_query):
 
 async def process_nst(callback_query, StyleTransfer, users_data):
     user_data = users_data[callback_query.from_user.id]
-    output = style_transfer(StyleTransfer, user_data, *user_data.photos)
+    output = await style_transfer(StyleTransfer, user_data, *user_data.photos)
     await bot.send_message(callback_query.from_user.id, emojize('Лови что получилось! :partying_face:'))
     await bot.send_photo(callback_query.from_user.id, photo=output)
     text = 'Если качество изображения тебя не устраивает, попробуй в следующий раз другое значение количества эпох'
@@ -236,7 +236,7 @@ async def style_transfer(st_class, user, *imgs):
                   epochs=user.settings['num_epochs'],
                   style_weight=100000, content_weight=1)
 
-    output = await st.run_style_transfer()
+    output = st.run_style_transfer()
     return tensor2img(output)
 
 
