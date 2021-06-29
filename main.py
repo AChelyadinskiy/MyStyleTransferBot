@@ -3,6 +3,7 @@ import io
 
 from aiogram import Bot, Dispatcher
 import os
+
 from aiogram.utils.emoji import emojize
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.executor import start_webhook
@@ -73,6 +74,7 @@ async def send_welcome(message):
                            f"Привет, {message.from_user.first_name}!\n" + answer, reply_markup=main_menu_kb)
 
     users_data[message.from_user.id] = UserInfo()
+    users_data[message.from_user.id].settings['chat_id'] = message.chat.id
 
 
 # main menu
@@ -206,7 +208,7 @@ async def style_transfer(st_class, user, *imgs):
                   epochs=user.settings['num_epochs'],
                   style_weight=100000, content_weight=1)
 
-    output = await st.run_style_transfer()
+    output = await st.run_style_transfer(API_TOKEN, user.settings['chat_id'])
     return tensor2img(output)
 
 
@@ -218,8 +220,7 @@ def tensor2img(t):
 
 
 async def on_startup(dp):
-    logging.warning(
-        'Starting connection. ')
+    logging.warning('Starting connection. ')
     await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
 
 
@@ -238,3 +239,4 @@ if __name__ == '__main__':
         host=WEBAPP_HOST,
         port=WEBAPP_PORT,
     )
+

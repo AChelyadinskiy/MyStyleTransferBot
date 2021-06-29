@@ -6,6 +6,8 @@ import torch.optim as optim
 from PIL import Image
 
 import torchvision.transforms as transforms
+from tqdm.contrib.telegram import trange
+
 
 class ContentLoss(nn.Module):
     def __init__(self, target, ):
@@ -75,9 +77,8 @@ class StyleTransfer:
         optimizer = optim.LBFGS([input_img.requires_grad_()])
         return optimizer
 
-    async def run_style_transfer(self):
+    async def run_style_transfer(self, token, chat_id):
         """Run the style transfer."""
-        print('Building the style transfer model..')
 
         optimizer = self.get_input_optimizer(self.input_img)
 
@@ -97,10 +98,7 @@ class StyleTransfer:
                         model.style_loss_5]
         content_losses = [model.content_loss_4]
 
-        print('Optimizing..')
-        run = [0]
-        while run[0] <= self.epochs:
-            # await asyncio.sleep(0)
+        for _ in trange(self.epochs, token=token, chat_id=chat_id):
 
             def closure():
                 # correct the values of updated input image
@@ -121,19 +119,10 @@ class StyleTransfer:
 
                 loss = style_score + content_score
                 loss.backward()
-
-                run[0] += 1
-                if run[0] % 50 == 0:
-                    print("run {}:".format(run))
-                    print('Style Loss : {:4f} Content Loss: {:4f}'.format(
-                        style_score.item(), content_score.item()))
-                    print()
-
                 return style_score + content_score
 
             optimizer.step(closure)
 
-        # a last correction...
         self.input_img.data.clamp_(0, 1)
 
         return self.input_img
