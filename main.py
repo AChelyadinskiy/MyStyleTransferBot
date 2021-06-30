@@ -32,7 +32,7 @@ class UserInfo:
     def __init__(self):
         # default settigs
         self.settings = {'num_epochs': 200,
-                         'imsize': 256}
+                         'imsize': 128}
         self.photos = []
         self.chat_id = -1
 
@@ -57,8 +57,6 @@ num_epochs_kb.add(InlineKeyboardButton('Назад', callback_data='settings'))
 imsize_kb = InlineKeyboardMarkup()
 imsize_kb.add(InlineKeyboardButton('64 пикселя', callback_data='imsize_64'))
 imsize_kb.add(InlineKeyboardButton('128 пикселей', callback_data='imsize_128'))
-imsize_kb.add(InlineKeyboardButton('256 пикселей', callback_data='imsize_256'))
-imsize_kb.add(InlineKeyboardButton('512 пикселей', callback_data='imsize_512'))
 imsize_kb.add(InlineKeyboardButton('Назад', callback_data='settings'))
 
 finish_kb = InlineKeyboardMarkup()
@@ -148,8 +146,8 @@ async def change_imsize(callback_query):
 
 
 @dp.callback_query_handler(lambda c: c.data == 'finish')
-async def finish(message):
-    await send_welcome(message)
+async def finish(callback_query):
+    await send_welcome(callback_query.message)
 
 
 # getting image
