@@ -1,3 +1,5 @@
+import asyncio
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -99,6 +101,8 @@ class StyleTransfer:
         content_losses = [model.content_loss_4]
 
         for _ in trange(self.epochs, token=token, chat_id=chat_id):
+
+            await asyncio.sleep(0)
 
             def closure():
                 # correct the values of updated input image

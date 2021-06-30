@@ -1,5 +1,6 @@
 import logging
 import io
+import threading
 
 from aiogram import Bot, Dispatcher
 import os
@@ -33,6 +34,7 @@ class UserInfo:
         self.settings = {'num_epochs': 200,
                          'imsize': 256}
         self.photos = []
+        self.chat_id = -1
 
 
 main_menu_kb = InlineKeyboardMarkup()
@@ -189,12 +191,22 @@ async def get_image(message):
 async def generate(callback_query):
     text = "Теперь придется немного подождать... Процесс может занять до 15 минут, а в некоторых случаях и дольше"
     await callback_query.message.edit_text(text)
+    t = threading.Thread(
+        target=lambda callback_query, StyleTransfer, users_data:
+        asyncio.run(process_nst(callback_query, StyleTransfer, users_data)),
+        args=(callback_query, StyleTransfer, users_data))
+    t.start()
+
+
+async def process_nst(callback_query, StyleTransfer, users_data):
     user_data = users_data[callback_query.from_user.id]
     output = await style_transfer(StyleTransfer, user_data, *user_data.photos)
-    await bot.send_message(callback_query.from_user.id, emojize('Лови что получилось! :partying_face:'))
-    await bot.send_photo(callback_query.from_user.id, photo=output)
+    bot1 = Bot(token=API_TOKEN)
+    await bot1.send_message(callback_query.from_user.id, emojize('Лови что получилось! :partying_face:'))
+    await bot1.send_photo(callback_query.from_user.id, photo=output)
     text = 'Если качество изображения тебя не устраивает, попробуй в следующий раз другое значение количества эпох'
-    await bot.send_message(callback_query.from_user.id, text, reply_markup=finish_kb)
+    await bot1.send_message(callback_query.from_user.id, text, reply_markup=finish_kb)
+    await bot1.close()
     del users_data[callback_query.from_user.id]
 
 
@@ -239,4 +251,3 @@ if __name__ == '__main__':
         host=WEBAPP_HOST,
         port=WEBAPP_PORT,
     )
-
