@@ -31,7 +31,7 @@ users_data = {}
 class UserInfo:
     def __init__(self):
         # default settigs
-        self.settings = {'num_epochs': 200,
+        self.settings = {'num_epochs': 50,
                          'imsize': 128}
         self.photos = []
         self.chat_id = -1
@@ -46,12 +46,12 @@ settings_kb.add(InlineKeyboardButton('Размер картинки', callback_d
 settings_kb.add(InlineKeyboardButton(emojize('Запуск! :play_button:'), callback_data='generate'))
 
 num_epochs_kb = InlineKeyboardMarkup()
+num_epochs_kb.add(InlineKeyboardButton('25', callback_data='num_epochs_25'))
 num_epochs_kb.add(InlineKeyboardButton('50', callback_data='num_epochs_50'))
 num_epochs_kb.add(InlineKeyboardButton('100', callback_data='num_epochs_100'))
 num_epochs_kb.add(InlineKeyboardButton('150', callback_data='num_epochs_150'))
 num_epochs_kb.add(InlineKeyboardButton('200', callback_data='num_epochs_200'))
 num_epochs_kb.add(InlineKeyboardButton('300', callback_data='num_epochs_300'))
-num_epochs_kb.add(InlineKeyboardButton('400', callback_data='num_epochs_400'))
 num_epochs_kb.add(InlineKeyboardButton('Назад', callback_data='settings'))
 
 imsize_kb = InlineKeyboardMarkup()
@@ -82,7 +82,7 @@ async def send_welcome(message):
 @dp.callback_query_handler(lambda c: c.data == 'main_menu')
 async def main_menu(callback_query):
     await bot.answer_callback_query(callback_query.id)
-    await callback_query.message.edit_text("Начнем с начала")
+    await callback_query.message.edit_text("Выбирай один из алгоритмов и я покажу тебе свою мощь.")
     await callback_query.message.edit_reply_markup(reply_markup=main_menu_kb)
 
 
