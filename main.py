@@ -60,7 +60,8 @@ imsize_kb.add(InlineKeyboardButton('128 пикселей', callback_data='imsize
 imsize_kb.add(InlineKeyboardButton('Назад', callback_data='settings'))
 
 finish_kb = InlineKeyboardMarkup()
-finish_kb.add(InlineKeyboardButton(emojize('Начать заного :counterclockwise_arrows_button:'), callback_data='finish'))
+finish_kb.add(
+    InlineKeyboardButton(emojize('Начать заного :counterclockwise_arrows_button:'), callback_data='main_menu'))
 
 
 # start
@@ -143,11 +144,6 @@ async def change_imsize(callback_query):
         "\nРазмер изображения: " + str(users_data[callback_query.from_user.id].settings['imsize']) +
         " пикселей\n\nВыбери настройки для изменения:")
     await callback_query.message.edit_reply_markup(reply_markup=settings_kb)
-
-
-@dp.callback_query_handler(lambda c: c.data == 'finish')
-async def finish(callback_query):
-    await send_welcome(callback_query.message)
 
 
 # getting image
